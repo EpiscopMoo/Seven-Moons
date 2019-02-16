@@ -22,7 +22,8 @@ enum class SignalType {
     game_map_reload,
     player_created,
     character_render,
-    player_sequence
+    player_sequence,
+    enemy_sequence
 };
 
 struct Signal {

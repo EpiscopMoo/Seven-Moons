@@ -37,24 +37,28 @@ public:
                     send_signal(new GameEndSignal());
                     break;
 
+                case 'k':
                 case KEY_UP:
                     if (!game_map->is_pathable(player.up())) {
                         player.down();
                     }
                     break;
 
+                case 'j':
                 case KEY_DOWN:
                     if (!game_map->is_pathable(player.down())) {
                         player.up();
                     }
                     break;
 
+                case 'h':
                 case KEY_LEFT:
                     if (!game_map->is_pathable(player.left())) {
                         player.right();
                     }
                     break;
 
+                case 'l':
                 case KEY_RIGHT:
                     if (!game_map->is_pathable(player.right())) {
                         player.left();

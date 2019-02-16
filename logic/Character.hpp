@@ -6,14 +6,14 @@
 class Character {
 
 public:
-    Character(const Point& orig, const std::string& sym) : position(orig), skin(sym) {
+    Character(const Point& orig, char sym) : position(orig), skin(sym) {
     }
 
     const Point &get_position() const {
         return position;
     }
 
-    const std::string& get_skin() const {
+    char get_skin() const {
         return skin;
     }
 
@@ -44,11 +44,28 @@ public:
     const GenericStats& stats() {
         return effective_stats;
     }
+    const std::string& get_description() {
+        return description;
+    }
+    const std::string& get_name() {
+        return name;
+    }
+    void set_name(const std::string& _name) {
+        name = _name;
+    }
+    void set_description(const std::string& _descr) {
+        description = _descr;
+    }
+    void set_stats(const GenericStats& _stats) {
+        effective_stats = _stats;
+    }
 
 protected:
+    std::string name;
+    std::string description;
     GenericStats effective_stats;
     Point position;
-    std::string skin;
+    char skin;
 };
 
 

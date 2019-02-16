@@ -52,9 +52,30 @@ public:
         };
         config["enemies"] = {
             {
+                { "x", 73},
+                { "y", 39},
                 { "name", "Farhgo" },
                 { "display", "F" },
-                { "descr", "Farhgos are vicious beasts dedicated to killing everything that moves. Small size and quick reflexes make them a perfect target practice." }
+                { "descr", "Farhgos are vicious beasts dedicated to killing everything that moves. Small size and quick reflexes make them a perfect target practice." },
+                { "stats", {
+                    { "max_hp", 10 },
+                    { "base_damage", 2 },
+                    { "speed", 2 },
+                    { "fov", 12 }
+                }}
+            },
+            {
+                { "x", 48},
+                { "y", 25},
+                { "name", "Farhgo" },
+                { "display", "F" },
+                { "descr", "Farhgos are vicious beasts dedicated to killing everything that moves. Small size and quick reflexes make them a perfect target practice." },
+                { "stats", {
+                    { "max_hp", 10 },
+                    { "base_damage", 2 },
+                    { "speed", 2 },
+                    { "fov", 12 }
+               }}
             }
         };
         return config;

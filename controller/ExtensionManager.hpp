@@ -10,6 +10,7 @@
 #include "extensions/IntroExtension.hpp"
 #include "extensions/PlayerExtension.hpp"
 #include "extensions/SelectionExtension.hpp"
+#include "extensions/EnemiesExtension.hpp"
 
 class ExtensionManager {
 
@@ -21,6 +22,7 @@ public:
         extensions.push_back(new IntroExtension(&bus));
         extensions.push_back(new PlayerExtension(&bus));
         extensions.push_back(new SelectionExtension(&bus));
+        extensions.push_back(new EnemiesExtension(&bus));
     }
 
     ~ExtensionManager() {
@@ -39,6 +41,7 @@ public:
             process_render();
             process_input(getch());
             process_player_sequence();
+            process_enemy_sequence();
         }
     }
 
@@ -72,4 +75,7 @@ private:
         bus.send_signal(new PlayerSequenceSignal());
     }
 
+    void process_enemy_sequence() {
+        bus.send_signal(new EnemySequenceSignal());
+    }
 };

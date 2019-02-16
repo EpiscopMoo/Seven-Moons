@@ -17,7 +17,7 @@ private:
     VisibilityCalculator visibility;
     Container* main_window = nullptr;
     Player* player = nullptr;
-    std::set<Character*> characters;
+    std::set<Character*> characters_to_render;
 
     Point compute_position() {
         return main_window->get_center() - map.get_pointer_position();
@@ -38,18 +38,18 @@ public:
         });
 
         subscribe({Stage::main_game, Stage::main_game_selection}, SignalType::character_render, [this] (Signal* signal) {
-            characters.insert(dynamic_cast<CharacterRenderSignal*>(signal)->get_character());
+            characters_to_render.insert(dynamic_cast<CharacterRenderSignal*>(signal)->get_character());
         });
 
         subscribe({Stage::main_game, Stage::main_game_selection}, SignalType::render_prepare, [this] (Signal* signal) {
             if (main_window) {
                 main_window->content_at(compute_position(), visibility.get_visible_map(*player));
-                for (auto character : characters) {
+                for (auto character : characters_to_render) {
                     auto position = character->get_position() + compute_position();
-                    auto skin = character->get_skin();
+                    auto skin = std::string(1, character->get_skin());
                     main_window->print_at(position, skin);
                 }
-                characters.clear();
+                characters_to_render.clear();
             }
         });
 

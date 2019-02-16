@@ -45,6 +45,12 @@ public:
         }
         return std::vector<std::string>();
     }
+
+    static bool is_visible(const Point& observer, const Point& target, int fov) {
+        int diff_x = abs(observer.x - target.x);
+        int diff_y = abs(observer.y - target.y);
+        return diff_x + diff_y <= fov;
+    }
 private:
     std::set<Point> discovered;
     GameMap* game_map;

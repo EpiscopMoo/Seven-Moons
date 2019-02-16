@@ -3,11 +3,14 @@
 #include <vector>
 #include <fstream>
 #include <map>
+#include <memory>
 
 #include "json.hpp"
 #include "MapAttributes.hpp"
 #include "Point.hpp"
 #include "MapObject.hpp"
+#include "Character.hpp"
+#include "Enemy.hpp"
 
 /**
  * Parses the given json map config and stores information about loaded map. The game level itself is represented via 2d char array.
@@ -17,6 +20,7 @@
 class GameMap {
 
     using json = nlohmann::json;
+    using P_Enemy = std::shared_ptr<Enemy>;
 
 public:
     explicit GameMap(json map_config) {
@@ -27,6 +31,10 @@ public:
         for (const auto& obj_data : map_config["objects"]) {
             MapObject object(obj_data);
             objects_table.insert({object.skin, object});
+        }
+        for (const auto& enemy_data : map_config["enemies"]) {
+            auto enemy = std::make_shared<Enemy>(enemy_data);
+            enemies[enemy->get_position()] = enemy;
         }
         read_file(MapAttributes::resource_path() + filename);
     }
@@ -68,12 +76,39 @@ public:
         return dimensions;
     }
 
+    std::vector<Enemy*> get_enemies() {
+        std::vector<Enemy*> result;
+        for (auto& enemy : enemies) {
+            result.push_back(enemy.second.get());
+        }
+        return result;
+    }
+
+    Character* character_at(const Point& p) {
+        if (enemies.count(p)) {
+            return enemies[p].get();
+        }
+        return nullptr;
+    }
+
+    bool is_valid(const Point& p) {
+        if (p.y < 0 or p.y >= level_map.size()) {
+            return false;
+        }
+        auto& row = level_map[p.y];
+        if (p.x < 0 or p.x >= row.size()) {
+            return false;
+        }
+        return true;
+    }
+
 private:
 
     std::string name;
     std::vector<std::string> level_map;
     Point pointer_position = {0, 0}; //x,y of the currently moving entity: player, selection cursor, etc
     std::map<char, MapObject> objects_table;
+    std::map<Point, P_Enemy> enemies;
     Point dimensions;
 
     void read_file(const std::string& file_n_path) {

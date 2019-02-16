@@ -39,15 +39,19 @@ public:
                 sel_position = game_map->get_pointer_position();
             } else if (get_stage() == Stage::main_game_selection) {
                 switch (key) {
+                    case 'k':
                     case KEY_UP:
                         sel_position.y -= 1;
                         break;
+                    case 'j':
                     case KEY_DOWN:
                         sel_position.y += 1;
                         break;
+                    case 'h':
                     case KEY_LEFT:
                         sel_position.x -= 1;
                         break;
+                    case 'l':
                     case KEY_RIGHT:
                         sel_position.x += 1;
                         break;

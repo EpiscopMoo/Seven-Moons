@@ -135,6 +135,13 @@ struct PlayerSequenceSignal : public Signal {
     }
 };
 
+struct EnemySequenceSignal : public Signal {
+
+    SignalType type() override {
+        return SignalType ::enemy_sequence;
+    }
+};
+
 struct PlayerCreatedSignal : public Signal {
 
     explicit PlayerCreatedSignal(Player* _player) : player(_player) {}
