@@ -3,6 +3,9 @@
 #include "Point.hpp"
 #include "GenericStats.hpp"
 
+class Character;
+using P_Character = std::shared_ptr<Character>;
+
 class Character {
 
 public:

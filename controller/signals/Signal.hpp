@@ -12,7 +12,6 @@ enum class Stage {
 enum class SignalType {
     game_initialization,
     game_end,
-    after_move,
     key_down,
     render_prepare,
     render_requested,

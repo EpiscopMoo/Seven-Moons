@@ -13,13 +13,6 @@ struct GameInitializationSignal : public Signal {
     }
 };
 
-struct AfterMoveSignal : public Signal {
-
-    SignalType type() override {
-        return SignalType ::after_move;
-    }
-};
-
 struct GameEndSignal : public Signal {
 
     SignalType type() override {
@@ -115,8 +108,8 @@ private:
 
 struct CharacterRenderSignal : public Signal {
 
-    explicit CharacterRenderSignal(Character* _character) : character(_character) {}
-    Character* get_character() {
+    explicit CharacterRenderSignal(P_Character _character) : character(_character) {}
+    P_Character get_character() {
         return character;
     }
 
@@ -125,7 +118,7 @@ struct CharacterRenderSignal : public Signal {
     }
 
 private:
-    Character* character;
+    P_Character character;
 };
 
 struct PlayerSequenceSignal : public Signal {
@@ -140,19 +133,4 @@ struct EnemySequenceSignal : public Signal {
     SignalType type() override {
         return SignalType ::enemy_sequence;
     }
-};
-
-struct PlayerCreatedSignal : public Signal {
-
-    explicit PlayerCreatedSignal(Player* _player) : player(_player) {}
-    Player* get_player() {
-        return player;
-    }
-
-    SignalType type() override {
-        return SignalType::player_created;
-    }
-
-private:
-    Player* player;
 };

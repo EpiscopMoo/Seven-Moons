@@ -68,14 +68,8 @@ private:
         neighs.push_back({x - 1, y});
         neighs.push_back({x, y - 1});
         for (auto& neigh : neighs) {
-            if (game_map->is_valid(neigh)) {
-                auto& game_object = game_map->object_at(neigh);
-                auto character = game_map->character_at(neigh);
-                bool pathable = game_object.pathable;
-                bool obstructed = character != nullptr;
-                if (pathable and not obstructed) {
-                    result.push_back(neigh);
-                }
+            if (game_map->is_pathable_ignoring_player(neigh)) {
+                result.push_back(neigh);
             }
         }
         return result;

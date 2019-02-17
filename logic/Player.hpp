@@ -3,6 +3,9 @@
 
 #include "Character.hpp"
 
+class Player;
+using P_Player = std::shared_ptr<Player>;
+
 class Player : public Character {
 
 public:

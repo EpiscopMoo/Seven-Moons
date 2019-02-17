@@ -11,6 +11,7 @@
 #include "MapObject.hpp"
 #include "Character.hpp"
 #include "Enemy.hpp"
+#include "Player.hpp"
 
 /**
  * Parses the given json map config and stores information about loaded map. The game level itself is represented via 2d char array.
@@ -20,7 +21,6 @@
 class GameMap {
 
     using json = nlohmann::json;
-    using P_Enemy = std::shared_ptr<Enemy>;
 
 public:
     explicit GameMap(json map_config) {
@@ -28,6 +28,7 @@ public:
         std::string filename = map_config["file"];
         pointer_position.x = map_config["player_x"];
         pointer_position.y = map_config["player_y"];
+        player = std::make_shared<Player>(pointer_position, '@');
         for (const auto& obj_data : map_config["objects"]) {
             MapObject object(obj_data);
             objects_table.insert({object.skin, object});
@@ -56,16 +57,17 @@ public:
     }
 
     bool is_pathable(const Point& p) {
-        if (p.y >= level_map.size() || std::min(p.x, p.y) < 0) {
-            return false;
+        if (is_valid(p) and character_at(p) == nullptr) {
+            return object_at(p).pathable;
         }
-        std::string row = level_map[p.y];
-        if (p.x >= row.size()) {
-            return false;
-        }
-        char key = row[p.x];
-        return objects_table.at(key).pathable;
+        return false;
+    }
 
+    bool is_pathable_ignoring_player(const Point& p) {
+        if (is_valid(p) and (character_at(p) == nullptr or character_at(p) == player)) {
+            return object_at(p).pathable;
+        }
+        return false;
     }
 
     const MapObject& object_at(const Point& p) {
@@ -76,17 +78,21 @@ public:
         return dimensions;
     }
 
-    std::vector<Enemy*> get_enemies() {
-        std::vector<Enemy*> result;
+    std::vector<P_Enemy> get_enemies() {
+        std::vector<P_Enemy> result;
         for (auto& enemy : enemies) {
-            result.push_back(enemy.second.get());
+            result.push_back(enemy.second);
         }
         return result;
     }
 
-    Character* character_at(const Point& p) {
+    P_Character character_at(const Point& p) {
         if (enemies.count(p)) {
-            return enemies[p].get();
+            return enemies[p];
+        } else if (characters.count(p)) {
+            return characters[p];
+        } else if (p == player->get_position()) {
+            return player;
         }
         return nullptr;
     }
@@ -102,6 +108,10 @@ public:
         return true;
     }
 
+    P_Player get_player() {
+        return player;
+    }
+
 private:
 
     std::string name;
@@ -109,6 +119,8 @@ private:
     Point pointer_position = {0, 0}; //x,y of the currently moving entity: player, selection cursor, etc
     std::map<char, MapObject> objects_table;
     std::map<Point, P_Enemy> enemies;
+    std::map<Point, P_Character> characters;
+    P_Player player;
     Point dimensions;
 
     void read_file(const std::string& file_n_path) {

@@ -6,7 +6,7 @@
 class EnemiesExtension : public Extension {
 
 private:
-    Player* player = nullptr;
+    P_Player player = nullptr;
     GameMap* game_map = nullptr;
     PathCalculator paths;
 
@@ -16,13 +16,9 @@ public:
     }
 
     void initialize() override {
-        subscribe(SignalType::player_created, [this] (Signal* signal) {
-            auto player_signal = dynamic_cast<PlayerCreatedSignal*>(signal);
-            player = player_signal->get_player();
-        });
-
         subscribe(SignalType::game_map_reload, [this] (Signal* signal) {
             game_map = dynamic_cast<GameMapReloadSignal*>(signal)->get_game_map();
+            player = game_map->get_player();
             paths.set_game_map(game_map);
         });
 

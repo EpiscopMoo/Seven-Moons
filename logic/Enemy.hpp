@@ -3,6 +3,9 @@
 #include "Character.hpp"
 #include "json.hpp"
 
+class Enemy;
+using P_Enemy = std::shared_ptr<Enemy>;
+
 class Enemy : public Character {
 
     using json = nlohmann::json;

@@ -16,8 +16,8 @@ private:
     GameMap map;
     VisibilityCalculator visibility;
     Container* main_window = nullptr;
-    Player* player = nullptr;
-    std::set<Character*> characters_to_render;
+    P_Player player = nullptr;
+    std::set<P_Character> characters_to_render;
 
     Point compute_position() {
         return main_window->get_center() - map.get_pointer_position();
@@ -34,6 +34,7 @@ public:
                 main_window->set_title(map.get_title());
                 main_window->set_hint("[;] - look mode, [arrows] - move");
                 send_signal(new GameMapReloadSignal(&map));
+                player = map.get_player();
             }
         });
 
@@ -51,11 +52,6 @@ public:
                 }
                 characters_to_render.clear();
             }
-        });
-
-        subscribe(SignalType::player_created, [this] (Signal* signal) {
-            auto player_signal = dynamic_cast<PlayerCreatedSignal*>(signal);
-            player = player_signal->get_player();
         });
     }
 };

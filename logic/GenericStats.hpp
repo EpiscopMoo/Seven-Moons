@@ -103,7 +103,7 @@ struct PlayerStats : public GenericStats {
         speed = 2 + agility;
         evasion_chance = agility * 5.0f / 100.0f;
         base_damage = strength;
-        fov = 8 + comprehension;
+        fov = 10 + comprehension;
         base_reaction = personality*10 + 50;
         carrying_weight = 50 + strength*20;
 
