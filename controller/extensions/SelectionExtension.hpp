@@ -6,8 +6,9 @@
 class SelectionExtension : public Extension {
 
 private:
-    Container* left_window;
     Container* main_window;
+    Container* left_window;
+    Container* right_window;
     Point sel_position;
     GameMap* game_map = nullptr;
 
@@ -23,6 +24,8 @@ public:
                 left_window = win_signal->get_window();
             } else if (win_signal->get_code() == "main") {
                 main_window = win_signal->get_window();
+            } else if (win_signal->get_code() == "right") {
+                right_window = win_signal->get_window();
             }
         });
 
@@ -62,18 +65,26 @@ public:
         });
 
         subscribe(Stage::main_game_selection, SignalType::render_prepare, [this] (Signal* signal) {
-            if (sel_position == game_map->get_pointer_position()) {
-                left_window->print_at({ 1, 1 }, "That's you.");
+            P_Character selected_character = game_map->character_at(sel_position);
+            Point sel_pos_relative_to_window = main_window->get_center() + sel_position - game_map->get_pointer_position();
+            if (selected_character != nullptr) {
+                left_window->titled_text(selected_character->get_name(), selected_character->get_description());
                 Colors::color_on(main_window->raw(), Colors::YELLOW_BLACK);
-                main_window->print_at(main_window->get_center(), "@");
+                main_window->print_at(sel_pos_relative_to_window, selected_character->get_skin());
                 Colors::color_off(main_window->raw());
+
+                if (selected_character != game_map->get_player()) {
+                    Colors::color_on(right_window->raw(), Colors::RED_BLACK);
+                    right_window->content_at({1, 1}, selected_character->stats().to_strings());
+                    Colors::color_off(right_window->raw());
+                }
             } else {
                 auto obj = game_map->object_at(sel_position);
                 std::string skin = obj.skin == ' ' ? "+" : std::string(1, obj.skin);
                 Colors::color_on(main_window->raw(), Colors::YELLOW_BLACK);
-                main_window->print_at(main_window->get_center() + sel_position - game_map->get_pointer_position(), skin);
+                main_window->print_at(sel_pos_relative_to_window, skin);
                 Colors::color_off(main_window->raw());
-                left_window->titled_text_at("[" + obj.name + "]", obj.description);
+                left_window->titled_text(obj.name, obj.description);
             }
         });
     }

@@ -26,11 +26,15 @@ public:
 
     virtual void text_at(const std::string& text) = 0;
 
-    virtual void titled_text_at(const std::string& title, const std::string& text) = 0;
+    virtual void titled_text(const std::string &title, const std::string &text) = 0;
 
     virtual void print_at(Point p, const std::string &str) = 0;
 
     virtual void print_at(Point p, const char *str_raw) = 0;
+
+    virtual void print_at(Point p, char sym) {
+        print_at(p, std::string(1, sym));
+    }
 
     virtual void print_border(chtype hor, chtype vert, chtype corner) = 0;
 

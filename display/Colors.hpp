@@ -7,12 +7,14 @@ struct Colors {
     static const short WHITE_BLACK = 1;
     static const short BLACK_WHITE = 2;
     static const short YELLOW_BLACK = 3;
+    static const short RED_BLACK = 4;
 
     static void init() {
         start_color();
         init_pair(WHITE_BLACK, COLOR_WHITE, COLOR_BLACK);
         init_pair(BLACK_WHITE, COLOR_BLACK, COLOR_WHITE);
         init_pair(YELLOW_BLACK, COLOR_YELLOW, COLOR_BLACK);
+        init_pair(RED_BLACK, COLOR_RED, COLOR_BLACK);
     }
 
     static void color_on(short pair_code) {

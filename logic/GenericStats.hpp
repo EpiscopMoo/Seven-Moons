@@ -21,20 +21,25 @@ struct GenericStats {
     int base_reaction = 0; //reaction towards this stat holder from other NPCs
     int carrying_weight = 0;
 
-    std::vector<std::string> descr() {
+    virtual std::vector<std::string> to_strings() const {
         std::vector<std::string> info_strs;
-        info_strs.push_back("Health:  " + std::to_string(hp) + "/" + std::to_string(max_hp));
+        info_strs.push_back(resource_bar(hp, max_hp, "HP"));
         if (max_ep > 0) {
-            info_strs.push_back("Energy:  " + std::to_string(ep) + "/" + std::to_string(max_ep));
+            info_strs.push_back(resource_bar(ep, max_ep, "EP"));
         }
         if (max_charge > 0) {
-            info_strs.push_back("Charge:  " + std::to_string(charge) + "/" + std::to_string(max_charge));
+            info_strs.push_back(resource_bar(charge, max_charge, "CH"));
         }
         if (max_barrier > 0) {
-            info_strs.push_back("Barrier: " + std::to_string(barrier) + "/" + std::to_string(max_barrier));
+            info_strs.push_back(resource_bar(barrier, max_barrier, "BR"));
         }
         info_strs.push_back("Speed:   " + std::to_string(speed));
-        info_strs.push_back("Damage: " + std::to_string(base_damage));
+        info_strs.push_back("Damage:  " + std::to_string(base_damage));
+        info_strs.push_back("Evasion: " + std::to_string((int) (evasion_chance * 100)) + "%");
+        info_strs.push_back("View:    " + std::to_string(fov) + " cells");
+        if (carrying_weight > 0) {
+            info_strs.push_back("Carrying weight: " + std::to_string(carrying_weight));
+        }
         return info_strs;
     }
 
@@ -89,6 +94,17 @@ private:
     static bool defined(const json& stats_config, const std::string& field) {
         return stats_config.find(field) != stats_config.end();
     }
+
+    template<typename T>
+    std::string resource_bar(T current, T max, const std::string& label) const {
+        auto blocks = static_cast<int>((float) current / max * 10.0f);
+        std::string bar = label + ": [";
+        for (int i=0; i<10; i++) {
+            bar += (i < blocks) ? "=" : " ";
+        }
+        bar += "] " + std::to_string((int) current) + "/" + std::to_string((int) max);
+        return bar;
+    }
 };
 
 struct PlayerStats : public GenericStats {
@@ -121,29 +137,16 @@ struct PlayerStats : public GenericStats {
         update_secondary();
     }
 
-    std::vector<std::string> to_strings() const {
-        auto blocks = static_cast<int>((float) hp / max_hp * 10.0f);
-        std::string hp_bar = "HP: [";
-        for (int i=0; i<10; i++) {
-            hp_bar += (i < blocks) ? "=" : " ";
-        }
-        hp_bar += "] " + std::to_string(hp) + "/" + std::to_string(max_hp);
-
-        blocks = static_cast<int>((float) ep / max_ep * 10.0f);
-        std::string ep_bar = "EP: [";
-        for (int i=0; i<10; i++) {
-            ep_bar += (i < blocks) ? "=" : " ";
-        }
-        ep_bar += "] " + std::to_string(ep) + "/" + std::to_string(max_ep);
-        return {
-            hp_bar,
-            ep_bar,
-            "Strength:      " + std::to_string(strength),
-            "Personality:   " + std::to_string(personality),
-            "Agility:       " + std::to_string(agility),
-            "Comprehension: " + std::to_string(comprehension),
-            "Energy:        " + std::to_string(energy)
-        };
+    std::vector<std::string> to_strings() const override {
+        auto stats_strings = GenericStats::to_strings();
+        stats_strings.push_back("S.P.A.C.E. = " +
+            std::to_string(strength) + " " +
+            std::to_string(personality) + " " +
+            std::to_string(agility) + " " +
+            std::to_string(comprehension) + " " +
+            std::to_string(energy)
+        );
+        return stats_strings;
     }
 };
 

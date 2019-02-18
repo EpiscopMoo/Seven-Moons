@@ -42,11 +42,13 @@ public:
             }};
             windows = new WindowTree(layout);
             CWindow* main_window = windows->get_window<CWindow>("main");
-            CWindow* middle_window = windows->get_window<CWindow>("middle");
             CWindow* left_window = windows->get_window<CWindow>("left");
+            CWindow* middle_window = windows->get_window<CWindow>("middle");
+            CWindow* right_window = windows->get_window<CWindow>("right");
             send_signal(new WindowCreatedSignal(main_window, "main"));
             send_signal(new WindowCreatedSignal(left_window, "left"));
             send_signal(new WindowCreatedSignal(middle_window, "middle"));
+            send_signal(new WindowCreatedSignal(right_window, "right"));
         });
 
         subscribe({Stage::main_game, Stage::main_game_selection}, SignalType::render_prepare, [this] (Signal* signal) {

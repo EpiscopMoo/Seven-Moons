@@ -34,8 +34,8 @@ public:
         text_at({1, 1}, text);
     }
 
-    virtual void titled_text_at(const std::string& title, const std::string& text) {
-        print_at({1, 1}, title);
+    virtual void titled_text(const std::string &title, const std::string &text) {
+        print_at({1, 1}, "[" + title + "]");
         text_at({1, 3}, text);
     }
 
